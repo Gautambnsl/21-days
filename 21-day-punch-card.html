@@ -152,7 +152,7 @@
   const KEY = "punchcard21";
   const TOTAL = 21;
   let mem = null;                        // fallback if storage is blocked
-  let state = { habit:"Morning workout", days:Array(TOTAL).fill(false), start:null };
+  let state = { habit:"Track Sheet 21 Days", days:Array(TOTAL).fill(false), start:null };
 
   function load(){
     try{ const r = localStorage.getItem(KEY); if(r) return JSON.parse(r); }
