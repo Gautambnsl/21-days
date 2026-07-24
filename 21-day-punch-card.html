@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>21-Day Punch Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E6EBF0;
+    --card:#FFFFFF;
+    --ink:#122036;
+    --ink-soft:#61738A;
+    --line:#C9D4DE;
+    --punch:#E5326B;
+    --punch-dim:rgba(229,50,107,.12);
+    --radius:14px;
+    --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0D141E;
+      --card:#18222F;
+      --ink:#E8EEF5;
+      --ink-soft:#8598AC;
+      --line:#2A3745;
+      --punch:#FF5C86;
+      --punch-dim:rgba(255,92,134,.16);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--mono);
+    -webkit-font-smoothing:antialiased;
+    padding:22px 18px 26px;
+  }
+  .wrap{max-width:860px;margin:0 auto}
+
+  /* ---------- header ---------- */
+  .eyebrow{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-soft);display:flex;gap:10px;align-items:center;
+  }
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+  .head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;margin:12px 0 4px}
+  #habit{
+    font-family:var(--display);font-weight:800;font-size:clamp(26px,5vw,40px);
+    line-height:1.05;letter-spacing:-.02em;color:var(--ink);
+    background:transparent;border:0;border-bottom:2px dashed var(--line);
+    padding:0 2px 4px;flex:1;min-width:220px;outline:none;
+  }
+  #habit:focus{border-bottom-color:var(--punch)}
+  .tally{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;letter-spacing:-.03em;white-space:nowrap}
+  .tally small{font-family:var(--mono);font-weight:400;font-size:13px;color:var(--ink-soft);letter-spacing:.06em}
+  .bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:16px 0 22px}
+  .bar i{display:block;height:100%;width:0;background:var(--punch);border-radius:99px;transition:width .35s cubic-bezier(.2,.8,.3,1)}
+
+  /* ---------- weeks + grid ---------- */
+  .week{margin-bottom:16px}
+  .wlabel{font-size:10px;letter-spacing:.2em;color:var(--ink-soft);margin-bottom:8px;text-transform:uppercase}
+  .row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+
+  .day{
+    position:relative;appearance:none;border:1px solid var(--line);
+    background:var(--card);border-radius:var(--radius);
+    aspect-ratio:1/1.12;padding:8px 8px 6px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    font-family:var(--mono);color:var(--ink);
+    transition:transform .12s ease,border-color .18s ease,background .18s ease;
+  }
+  .day:hover{transform:translateY(-2px);border-color:var(--punch)}
+  .day:focus-visible{outline:2px solid var(--punch);outline-offset:2px}
+  .day .n{font-size:11px;color:var(--ink-soft);align-self:flex-start;letter-spacing:.04em}
+  .hole{
+    width:58%;aspect-ratio:1;border-radius:50%;
+    border:2px dashed var(--line);
+    display:grid;place-items:center;
+    transition:all .18s ease;
+  }
+  .hole span{font-size:15px;font-weight:600;color:transparent;transition:color .18s ease}
+  .date{font-size:9px;color:var(--ink-soft);letter-spacing:.02em;opacity:.75}
+
+  /* punched */
+  .day.on{background:var(--punch-dim);border-color:var(--punch)}
+  .day.on .n{color:var(--punch)}
+  .day.on .hole{
+    border:0;background:var(--paper);
+    box-shadow:inset 0 2px 5px rgba(0,0,0,.28), 0 0 0 2px var(--punch);
+  }
+  .day.on .hole span{color:var(--punch)}
+  .day.on.pop{animation:punch .3s cubic-bezier(.3,1.4,.5,1)}
+  @keyframes punch{0%{transform:scale(1)}40%{transform:scale(.9)}100%{transform:scale(1)}}
+  .day.today::after{
+    content:"";position:absolute;top:7px;right:7px;width:5px;height:5px;
+    border-radius:50%;background:var(--punch)
+  }
+
+  /* ---------- footer ---------- */
+  .foot{
+    display:flex;flex-wrap:wrap;gap:18px;align-items:center;
+    margin-top:20px;padding-top:14px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--ink-soft);letter-spacing:.04em
+  }
+  .stat b{font-family:var(--display);font-weight:800;font-size:16px;color:var(--ink);margin-right:5px}
+  .foot button{
+    margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    background:transparent;color:var(--ink-soft);border:1px solid var(--line);
+    border-radius:99px;padding:6px 14px;cursor:pointer;transition:all .15s ease
+  }
+  .foot button:hover{color:var(--punch);border-color:var(--punch)}
+  .note{margin-top:10px;font-size:10px;color:var(--ink-soft);opacity:.7}
+  @media (max-width:560px){
+    .row{gap:6px}
+    .day{border-radius:11px;padding:6px 5px 5px}
+    .day .n{font-size:9px}
+    .hole span{font-size:12px}
+    .date{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">21-day punch card</div>
+
+  <div class="head">
+    <input id="habit" value="Morning workout" aria-label="Habit name" spellcheck="false">
+    <div class="tally"><span id="count">0</span>/21 <small>punched</small></div>
+  </div>
+
+  <div class="bar"><i id="fill"></i></div>
+
+  <div id="grid"></div>
+
+  <div class="foot">
+    <div class="stat"><b id="streak">0</b>current streak</div>
+    <div class="stat"><b id="best">0</b>best run</div>
+    <div class="stat"><b id="left">21</b>days to go</div>
+    <button id="reset" type="button">Start over</button>
+  </div>
+  <div class="note" id="note"></div>
+</div>
+
+<script>
+(function(){
+  const KEY = "punchcard21";
+  const TOTAL = 21;
+  let mem = null;                        // fallback if storage is blocked
+  let state = { habit:"Morning workout", days:Array(TOTAL).fill(false), start:null };
+
+  function load(){
+    try{ const r = localStorage.getItem(KEY); if(r) return JSON.parse(r); }
+    catch(e){ mem = mem || null; }
+    return mem;
+  }
+  function save(){
+    mem = state;
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch(e){ document.getElementById("note").textContent =
+      "Heads up: this browser is blocking saved data, so punches reset when the page reloads."; }
+  }
+
+  const saved = load();
+  if(saved && Array.isArray(saved.days) && saved.days.length === TOTAL) state = saved;
+
+  const grid = document.getElementById("grid");
+  const habitEl = document.getElementById("habit");
+  habitEl.value = state.habit;
+
+  function dateFor(i){
+    if(!state.start) return "";
+    const d = new Date(state.start); d.setDate(d.getDate()+i);
+    return d.toLocaleDateString(undefined,{day:"2-digit",month:"short"}).toUpperCase();
+  }
+  function todayIndex(){
+    if(!state.start) return -1;
+    const a = new Date(state.start); a.setHours(0,0,0,0);
+    const b = new Date(); b.setHours(0,0,0,0);
+    const i = Math.round((b-a)/86400000);
+    return (i>=0 && i<TOTAL) ? i : -1;
+  }
+
+  function build(){
+    grid.innerHTML = "";
+    for(let w=0; w<3; w++){
+      const wk = document.createElement("div"); wk.className = "week";
+      wk.innerHTML = '<div class="wlabel">Week 0'+(w+1)+'</div>';
+      const row = document.createElement("div"); row.className = "row";
+      for(let d=0; d<7; d++){
+        const i = w*7+d;
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "day"; b.dataset.i = i;
+        b.setAttribute("aria-pressed","false");
+        b.innerHTML = '<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+
+                      '<span class="hole"><span>&#10003;</span></span>'+
+                      '<span class="date"></span>';
+        b.addEventListener("click", ()=>toggle(i,b));
+        row.appendChild(b);
+      }
+      wk.appendChild(row); grid.appendChild(wk);
+    }
+    render();
+  }
+
+  function toggle(i, el){
+    state.days[i] = !state.days[i];
+    if(state.days[i] && !state.start) state.start = new Date().toISOString();
+    if(state.days[i]){ el.classList.add("pop"); setTimeout(()=>el.classList.remove("pop"),300); }
+    save(); render();
+  }
+
+  function render(){
+    const done = state.days.filter(Boolean).length;
+    document.getElementById("count").textContent = done;
+    document.getElementById("fill").style.width = (done/TOTAL*100)+"%";
+    document.getElementById("left").textContent = TOTAL-done;
+
+    let best=0, run=0, cur=0;
+    state.days.forEach(v=>{ run = v ? run+1 : 0; if(run>best) best=run; });
+    for(let i=TOTAL-1;i>=0;i--){ if(state.days[i]) cur++; else if(cur) break; }
+    document.getElementById("best").textContent = best;
+    document.getElementById("streak").textContent = cur;
+
+    const ti = todayIndex();
+    document.querySelectorAll(".day").forEach(el=>{
+      const i = +el.dataset.i;
+      el.classList.toggle("on", !!state.days[i]);
+      el.classList.toggle("today", i===ti);
+      el.setAttribute("aria-pressed", state.days[i] ? "true":"false");
+      el.setAttribute("aria-label","Day "+(i+1)+(state.days[i]?", punched":", not punched"));
+      el.querySelector(".date").textContent = dateFor(i);
+    });
+  }
+
+  habitEl.addEventListener("input", ()=>{ state.habit = habitEl.value; save(); });
+
+  document.getElementById("reset").addEventListener("click", ()=>{
+    state.days = Array(TOTAL).fill(false); state.start = null; save(); render();
+  });
+
+  build();
+})();
+</script>
+</body>
+</html>
