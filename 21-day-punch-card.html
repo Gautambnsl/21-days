@@ -130,7 +130,7 @@
   <div class="eyebrow">21-day punch card</div>
 
   <div class="head">
-    <input id="habit" value="Track sheet 21 Days" aria-label="Habit name" spellcheck="false">
+    <input id="habit" value="Morning workout" aria-label="Habit name" spellcheck="false">
     <div class="tally"><span id="count">0</span>/21 <small>punched</small></div>
   </div>
 
@@ -152,7 +152,7 @@
   const KEY = "punchcard21";
   const TOTAL = 21;
   let mem = null;                        // fallback if storage is blocked
-  let state = { habit:"Track Sheet 21 Days", days:Array(TOTAL).fill(false), start:null };
+  let state = { habit:"Morning workout", days:Array(TOTAL).fill(false), start:null };
 
   function load(){
     try{ const r = localStorage.getItem(KEY); if(r) return JSON.parse(r); }
